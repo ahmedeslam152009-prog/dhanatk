@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إسلام أحمد - للخدمات والديكور والدهانات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+        
+        * {
+            font-family: 'Tajawal', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .viewport-wrapper {
+            transition: all 0.4s ease-in-out;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .viewport-wrapper.mobile-mode {
+            max-width: 410px;
+            border: 10px solid #334155;
+            border-radius: 36px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            margin-top: 15px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .viewport-wrapper.tablet-mode {
+            max-width: 768px;
+            border: 12px solid #334155;
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            margin-top: 15px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .editable-element[contenteditable="true"] {
+            outline: 2px dashed #38bdf8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .floating-catalog-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            border: 3px solid #ffffff;
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.5);
+            cursor: pointer;
+            z-index: 90;
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .shade-card {
+            transition: all 0.2s ease;
+        }
+        .shade-card:hover {
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-4">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-6 py-3 rounded-full shadow-2xl font-bold hidden z-[300] transition-all duration-300 flex items-center gap-2">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toast-msg">تمت العملية بنجاح!</span>
+    </div>
+
+    <!-- Device Selector Top Bar -->
+    <div class="max-w-4xl mx-auto mb-4 bg-slate-800 border border-slate-700 p-2.5 rounded-full flex items-center justify-between shadow-xl">
+        <div class="flex items-center gap-1 sm:gap-2">
+            <button onclick="setViewport('desktop')" id="btn-device-desktop" class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-slate-700 text-slate-300 hover:bg-sky-500 hover:text-white transition">
+                <i class="fa-solid fa-desktop ml-1"></i> كمبيوتر
+            </button>
+            <button onclick="setViewport('tablet')" id="btn-device-tablet" class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-slate-700 text-slate-300 hover:bg-sky-500 hover:text-white transition">
+                <i class="fa-solid fa-tablet-screen-button ml-1"></i> تابلت
+            </button>
+            <button onclick="setViewport('mobile')" id="btn-device-mobile" class="px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-sky-500 text-white shadow-lg transition">
+                <i class="fa-solid fa-mobile-screen-button ml-1"></i> موبايل
+            </button>
+        </div>
+
+        <div>
+            <button id="admin-toggle-btn" onclick="toggleAdminMode()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-1.5 rounded-full text-xs sm:text-sm shadow-lg flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-gear"></i>
+                <span id="admin-btn-text">⚙️ وضع التعديل</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Website Container -->
+    <div id="viewport" class="viewport-wrapper mobile-mode bg-slate-900 border-slate-800 text-slate-100 min-h-[800px] relative">
+        
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b-2 border-sky-400 p-6 text-center relative shadow-lg">
+            <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-tr from-sky-600 to-cyan-400 flex items-center justify-center border-4 border-white shadow-xl shadow-sky-500/20 text-3xl font-black text-white tracking-wider">
+                EA
+            </div>
+            <h1 id="site-title" class="editable-element text-2xl sm:text-3xl font-black text-sky-400 tracking-wide" contenteditable="false">
+                Eslam Ahmed
+            </h1>
+            <p id="site-subtitle" class="editable-element text-sm text-slate-400 font-medium mt-1" contenteditable="false">
+                عالم الديكور والدهانات الحديثة والتشطيبات الفاخرة
+            </p>
+        </header>
+
+        <!-- Owner Admin Toolbar -->
+        <div id="owner-toolbar" class="hidden bg-amber-500/10 border-b border-amber-500/40 p-3 text-amber-300 text-xs sm:text-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-wrench text-amber-400"></i>
+                    <span>وضع التعديل نشط (كلمة السر 201801)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openAddNewSectionModal()" class="bg-amber-500 text-slate-950 font-bold px-3 py-1 rounded-lg hover:bg-amber-400 transition">
+                        <i class="fa-solid fa-plus ml-1"></i> إضافة قسم جديد
+                    </button>
+                    <button onclick="saveAllContent()" class="bg-emerald-500 text-white font-bold px-3 py-1 rounded-lg hover:bg-emerald-600 transition shadow">
+                        <i class="fa-solid fa-floppy-disk ml-1"></i> حفظ التغيرات
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dynamic Content Area -->
+        <div id="dynamic-sections-container" class="p-4 sm:p-6 space-y-6">
+
+            <!-- Card 1: Action Modals Grid -->
+            <div class="section-card relative bg-slate-800/80 border border-slate-700 p-4 rounded-2xl shadow-xl group" data-section-id="actions">
+                <div class="section-controls hidden absolute -top-3 left-3 bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1 z-20">
+                    <button onclick="moveSection(this, 'up')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-arrow-up"></i></button>
+                    <button onclick="moveSection(this, 'down')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-arrow-down"></i></button>
+                    <button onclick="deleteSection(this)" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="openModal('services-modal')" class="bg-slate-700/80 hover:bg-slate-700 border border-slate-600/80 p-5 rounded-2xl flex flex-col items-center justify-center gap-3 transition transform hover:-translate-y-1 shadow-lg group">
+                        <div class="w-14 h-14 rounded-full bg-sky-500/20 text-sky-400 border border-sky-400/30 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                        <span class="font-bold text-base text-slate-100">خدماتنا</span>
+                    </button>
+
+                    <button onclick="openModal('gallery-modal')" class="bg-slate-700/80 hover:bg-slate-700 border border-slate-600/80 p-5 rounded-2xl flex flex-col items-center justify-center gap-3 transition transform hover:-translate-y-1 shadow-lg group">
+                        <div class="w-14 h-14 rounded-full bg-purple-500/20 text-purple-400 border border-purple-400/30 flex items-center justify-center text-2xl group-hover:scale-110 transition">
+                            <i class="fa-solid fa-images"></i>
+                        </div>
+                        <span class="font-bold text-base text-slate-100">معرض الأعمال</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2: Quick Contact Row -->
+            <div class="section-card relative bg-slate-800/80 border border-slate-700 p-4 rounded-2xl shadow-xl group" data-section-id="contacts">
+                <div class="section-controls hidden absolute -top-3 left-3 bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1 z-20">
+                    <button onclick="moveSection(this, 'up')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-arrow-up"></i></button>
+                    <button onclick="moveSection(this, 'down')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-arrow-down"></i></button>
+                </div>
+
+                <h3 class="text-sm font-bold text-slate-400 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-headset text-sky-400"></i> التواصل المباشر
+                </h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <a id="link-phone" href="tel:01001979179" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>اتصال مباشر</span>
+                    </a>
+                    <a id="link-whatsapp" href="https://wa.me/201001979179" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>واتساب</span>
+                    </a>
+                    <a id="link-messenger" href="https://m.me/eslam.ahmed" target="_blank" class="bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+                        <i class="fa-brands fa-facebook-messenger text-lg"></i>
+                        <span>مسنجر</span>
+                    </a>
+                </div>
+
+                <div id="contact-edit-box" class="hidden mt-4 pt-3 border-t border-slate-700 space-y-2">
+                    <label class="text-xs text-amber-300 font-bold">تعديل رقم الهاتف والواتساب:</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="phone-number-input" value="01001979179" class="bg-slate-900 border border-slate-700 text-white text-xs p-2 rounded-lg flex-1 dir-ltr">
+                        <button onclick="updatePhoneNumbers()" class="bg-amber-500 text-slate-950 font-bold text-xs px-3 py-1 rounded-lg">تحديث</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Content Containers Added by Owner -->
+            <div id="custom-added-sections" class="space-y-6"></div>
+
+        </div>
+    </div>
+
+    <!-- Floating Catalog Trigger -->
+    <button onclick="openModal('catalog-modal')" class="floating-catalog-btn flex flex-col items-center justify-center font-bold text-xs shadow-2xl">
+        <i class="fa-solid fa-palette text-xl mb-0.5"></i>
+        <span>كتالوج</span>
+    </button>
+
+    <!-- MODAL 1: Services (خدماتنا) -->
+    <div id="services-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-[200]">
+        <div class="bg-slate-900 border border-sky-500/30 w-full max-w-xl rounded-3xl p-6 relative max-h-[85vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <button onclick="closeModal('services-modal')" class="absolute top-4 left-4 bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 class="text-2xl font-black text-sky-400 text-center mb-6 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paint-roller"></i> خدماتنا التخصصية
+            </h2>
+
+            <div id="services-circles-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-6"></div>
+
+            <div id="admin-add-service-box" class="hidden mt-8 pt-4 border-t border-slate-800 bg-slate-950 p-4 rounded-2xl">
+                <h4 class="text-sm font-bold text-amber-400 mb-3"><i class="fa-solid fa-plus-circle ml-1"></i> إضافة خدمة جديدة:</h4>
+                <div class="space-y-3">
+                    <input type="text" id="new-service-title" placeholder="اسم الخدمة (مثال: تركيب جيسمبورد)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <input type="text" id="new-service-icon" placeholder="رمز FontAwesome (مثال: fa-solid fa-border-all)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                    <button onclick="addNewServiceItem()" class="w-full bg-amber-500 text-slate-950 font-bold p-2.5 rounded-xl text-xs hover:bg-amber-400 transition">
+                        حفظ الخدمة في القائمة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Gallery (معرض الأعمال) -->
+    <div id="gallery-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-[200]">
+        <div class="bg-slate-900 border border-purple-500/30 w-full max-w-2xl rounded-3xl p-6 relative max-h-[85vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <button onclick="closeModal('gallery-modal')" class="absolute top-4 left-4 bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 class="text-2xl font-black text-purple-400 text-center mb-6 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-images"></i> معرض الأعمال والديكورات
+            </h2>
+
+            <div id="gallery-items-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+
+            <!-- Admin Real File Upload Control -->
+            <div id="admin-gallery-box" class="hidden mt-8 pt-4 border-t border-slate-800 bg-slate-950 p-4 rounded-2xl space-y-4">
+                <h4 class="text-sm font-bold text-amber-400"><i class="fa-solid fa-upload ml-1"></i> رفع صورة مباشرة من جهازك / هاتفك:</h4>
+                <div class="flex flex-col gap-3">
+                    <input type="file" id="device-image-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-slate-300 file:ml-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-sky-500 file:text-white hover:file:bg-sky-600">
+                    <button onclick="uploadDeviceImage()" class="w-full bg-emerald-600 text-white font-bold p-2.5 rounded-xl text-xs hover:bg-emerald-500 transition">
+                        رفع الصورة وإضافتها للمعرض
+                    </button>
+                </div>
+
+                <div class="border-t border-slate-800 pt-3">
+                    <label class="text-[11px] text-slate-400 block mb-1">أو إضافة رابط صورة مباشر (URL):</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="gallery-img-url" placeholder="https://..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white">
+                        <button onclick="addGalleryUrl()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-4 py-2 rounded-xl text-xs">إضافة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Color Catalog -->
+    <div id="catalog-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-[200]">
+        <div class="bg-slate-900 border border-pink-500/30 w-full max-w-xl rounded-3xl p-6 relative max-h-[85vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <button onclick="closeModal('catalog-modal')" class="absolute top-4 left-4 bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 class="text-2xl font-black text-pink-400 text-center mb-4 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-swatchbook"></i> كتالوج الدهانات والألوان
+            </h2>
+
+            <!-- Color Categories Tabs -->
+            <div id="color-tabs-container" class="flex gap-2 overflow-x-auto pb-3 mb-4 custom-scrollbar"></div>
+
+            <!-- Admin Category Manager -->
+            <div id="admin-catalog-box" class="hidden mb-4 p-3 bg-slate-950 rounded-2xl border border-amber-500/30 space-y-2">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-amber-400">إدارة العائلات والألوان:</span>
+                    <button onclick="deleteCurrentCategory()" class="text-xs bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-lg hover:bg-rose-500 hover:text-white">حذف العائلة الحالية</button>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="new-cat-name" placeholder="اسم عائلة ألوان جديدة (مثال: جولد)" class="bg-slate-900 border border-slate-700 text-xs p-2 rounded-lg flex-1 text-white">
+                    <button onclick="addNewColorCategory()" class="bg-amber-500 text-slate-950 font-bold text-xs px-3 py-1 rounded-lg">إضافة عائلة</button>
+                </div>
+                <div class="flex gap-2 items-center pt-2 border-t border-slate-900">
+                    <input type="color" id="picker-new-shade" value="#38bdf8" class="w-8 h-8 rounded border-0 cursor-pointer bg-transparent">
+                    <input type="text" id="input-new-hex" value="#38bdf8" class="bg-slate-900 border border-slate-700 text-xs p-2 rounded-lg w-28 text-white dir-ltr text-center">
+                    <button onclick="addNewShadeToCurrentCategory()" class="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs px-4 py-2 rounded-lg flex-1">إضافة هذا اللون للعائلة</button>
+                </div>
+            </div>
+
+            <div id="shades-container" class="grid grid-cols-4 gap-3"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Add New Custom Section -->
+    <div id="add-section-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-[220]">
+        <div class="bg-slate-900 border border-amber-500/40 w-full max-w-md rounded-3xl p-6 relative shadow-2xl">
+            <button onclick="closeModal('add-section-modal')" class="absolute top-4 left-4 bg-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold text-amber-400 mb-4">إنشاء قسم جديد في الموقع</h3>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">عنوان القسم:</label>
+                    <input type="text" id="custom-sec-title" placeholder="مثال: آراء العملاء / عروض خاصة" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">محتوى أو وصف القسم:</label>
+                    <textarea id="custom-sec-desc" rows="3" placeholder="اكتب التفاصيل هنا..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"></textarea>
+                </div>
+                <button onclick="submitNewCustomSection()" class="w-full bg-amber-500 text-slate-950 font-bold p-2.5 rounded-xl text-xs hover:bg-amber-400 transition">
+                    إضافة القسم فوراً
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = "201801";
+        let isAdmin = false;
+
+        let defaultServices = [
+            { id: 1, title: 'ديكورات', icon: 'fa-solid fa-palette' },
+            { id: 2, title: 'تركيب بديل خشب ورخام', icon: 'fa-solid fa-layer-group' },
+            { id: 3, title: 'تركيب بنوهات', icon: 'fa-solid fa-border-all' },
+            { id: 4, title: 'دهان حوائط', icon: 'fa-solid fa-paint-roller' },
+            { id: 5, title: 'لصق ورق حائط', icon: 'fa-solid fa-scroll' },
+            { id: 6, title: 'دهان اخشاب', icon: 'fa-solid fa-chair' }
+        ];
+
+        let defaultGallery = [
+            'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=500&q=80',
+            'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&q=80',
+            'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=500&q=80'
+        ];
+
+        let defaultCatalog = {
+            'الأزرق السماوي': ['#f0f9ff', '#e0f2fe', '#bae6fd', '#7dd3fc', '#38bdf8', '#0284c7'],
+            'الأخضر الطبيعي': ['#f0fdf4', '#dcfce7', '#bbf7d0', '#86efac', '#4ade80', '#22c55e'],
+            'الترابي والبيج': ['#fffbeb', '#fef3c7', '#fde68a', '#fcd34d', '#fbbf24', '#f59e0b'],
+            'الرمادي العصري': ['#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b']
+        };
+
+        let activeColorCategoryKey = '';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedContent();
+            renderServices();
+            renderGallery();
+            initCatalogData();
+        });
+
+        function setViewport(type) {
+            const vp = document.getElementById('viewport');
+            vp.classList.remove('mobile-mode', 'tablet-mode');
+
+            document.getElementById('btn-device-mobile').className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-slate-700 text-slate-300 hover:bg-sky-500 hover:text-white transition";
+            document.getElementById('btn-device-tablet').className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-slate-700 text-slate-300 hover:bg-sky-500 hover:text-white transition";
+            document.getElementById('btn-device-desktop').className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-slate-700 text-slate-300 hover:bg-sky-500 hover:text-white transition";
+
+            if (type === 'mobile') {
+                vp.classList.add('mobile-mode');
+                document.getElementById('btn-device-mobile').className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-sky-500 text-white shadow-lg transition";
+            } else if (type === 'tablet') {
+                vp.classList.add('tablet-mode');
+                document.getElementById('btn-device-tablet').className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-sky-500 text-white shadow-lg transition";
+            } else {
+                document.getElementById('btn-device-desktop').className = "px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-sky-500 text-white shadow-lg transition";
+            }
+        }
+
+        function toggleAdminMode() {
+            if (!isAdmin) {
+                let pass = prompt("أدخل كلمة المرور لتفعيل وضع التعديل (201801):");
+                if (pass === ADMIN_PASSWORD) {
+                    isAdmin = true;
+                    enableEditingUI();
+                    showToast("تم تفعيل وضع التعديل بنجاح!");
+                } else if (pass !== null) {
+                    alert("كلمة المرور غير صحيحة!");
+                }
+            } else {
+                isAdmin = false;
+                disableEditingUI();
+                showToast("تم إغلاق وضع التعديل.");
+            }
+        }
+
+        function enableEditingUI() {
+            document.getElementById('owner-toolbar').classList.remove('hidden');
+            document.getElementById('contact-edit-box').classList.remove('hidden');
+            document.getElementById('admin-add-service-box').classList.remove('hidden');
+            document.getElementById('admin-gallery-box').classList.remove('hidden');
+            document.getElementById('admin-catalog-box').classList.remove('hidden');
+            document.getElementById('admin-btn-text').innerText = "❌ إنهاء التعديل";
+
+            document.querySelectorAll('.editable-element').forEach(el => el.setAttribute('contenteditable', 'true'));
+            document.querySelectorAll('.section-controls').forEach(el => {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            });
+
+            renderServices();
+            renderGallery();
+            renderColorCategories();
+        }
+
+        function disableEditingUI() {
+            document.getElementById('owner-toolbar').classList.add('hidden');
+            document.getElementById('contact-edit-box').classList.add('hidden');
+            document.getElementById('admin-add-service-box').classList.add('hidden');
+            document.getElementById('admin-gallery-box').classList.add('hidden');
+            document.getElementById('admin-catalog-box').classList.add('hidden');
+            document.getElementById('admin-btn-text').innerText = "⚙️ وضع التعديل";
+
+            document.querySelectorAll('.editable-element').forEach(el => el.setAttribute('contenteditable', 'false'));
+            document.querySelectorAll('.section-controls').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            });
+
+            renderServices();
+            renderGallery();
+            renderColorCategories();
+        }
+
+        function renderServices() {
+            const grid = document.getElementById('services-circles-grid');
+            let services = JSON.parse(localStorage.getItem('eslam_services')) || defaultServices;
+
+            grid.innerHTML = services.map(s => `
+                <div class="flex flex-col items-center text-center gap-3 relative group">
+                    ${isAdmin ? `
+                        <button onclick="removeServiceItem(${s.id})" class="absolute -top-1 -right-1 bg-rose-500 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center shadow-lg z-10">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    ` : ''}
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-sky-600 to-cyan-400 flex items-center justify-center text-3xl text-white shadow-xl shadow-sky-500/20 border-2 border-white/80 group-hover:scale-105 transition">
+                        <i class="${s.icon}"></i>
+                    </div>
+                    <span class="text-xs sm:text-sm font-bold text-slate-200">${s.title}</span>
+                </div>
+            `).join('');
+        }
+
+        function addNewServiceItem() {
+            const title = document.getElementById('new-service-title').value.trim();
+            const icon = document.getElementById('new-service-icon').value.trim() || 'fa-solid fa-star';
+            if (!title) return alert("يرجى إدخال اسم الخدمة");
+
+            let services = JSON.parse(localStorage.getItem('eslam_services')) || defaultServices;
+            services.push({ id: Date.now(), title, icon });
+            localStorage.setItem('eslam_services', JSON.stringify(services));
+
+            document.getElementById('new-service-title').value = '';
+            document.getElementById('new-service-icon').value = '';
+            renderServices();
+            showToast("تمت إضافة الخدمة بنجاح!");
+        }
+
+        function removeServiceItem(id) {
+            let services = JSON.parse(localStorage.getItem('eslam_services')) || defaultServices;
+            services = services.filter(s => s.id !== id);
+            localStorage.setItem('eslam_services', JSON.stringify(services));
+            renderServices();
+            showToast("تم حذف الخدمة.");
+        }
+
+        function renderGallery() {
+            const grid = document.getElementById('gallery-items-grid');
+            let gallery = JSON.parse(localStorage.getItem('eslam_gallery')) || defaultGallery;
+
+            grid.innerHTML = gallery.map((img, idx) => `
+                <div class="relative group rounded-2xl overflow-hidden border border-slate-700 bg-slate-800 aspect-square">
+                    ${isAdmin ? `
+                        <button onclick="removeGalleryImage(${idx})" class="absolute top-2 right-2 bg-rose-500 text-white w-7 h-7 rounded-full text-xs flex items-center justify-center shadow-lg z-10">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    ` : ''}
+                    <img src="${img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/300x300/334155/38bdf8?text=Decor'">
+                </div>
+            `).join('');
+        }
+
+        // Upload Real File from Device Gallery/Storage
+        function uploadDeviceImage() {
+            const fileInput = document.getElementById('device-image-file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                return alert("الرجاء اختيار صورة من جهازك أولاً");
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const base64String = e.target.result;
+                let gallery = JSON.parse(localStorage.getItem('eslam_gallery')) || defaultGallery;
+                gallery.push(base64String);
+                localStorage.setItem('eslam_gallery', JSON.stringify(gallery));
+
+                fileInput.value = '';
+                renderGallery();
+                showToast("تم رفع الصورة من جهازك وإضافتها بنجاح!");
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function addGalleryUrl() {
+            const url = document.getElementById('gallery-img-url').value.trim();
+            if (!url) return alert("الرجاء إدخال رابط الصورة");
+
+            let gallery = JSON.parse(localStorage.getItem('eslam_gallery')) || defaultGallery;
+            gallery.push(url);
+            localStorage.setItem('eslam_gallery', JSON.stringify(gallery));
+
+            document.getElementById('gallery-img-url').value = '';
+            renderGallery();
+            showToast("تمت إضافة الصورة بنجاح!");
+        }
+
+        function removeGalleryImage(idx) {
+            let gallery = JSON.parse(localStorage.getItem('eslam_gallery')) || defaultGallery;
+            gallery.splice(idx, 1);
+            localStorage.setItem('eslam_gallery', JSON.stringify(gallery));
+            renderGallery();
+            showToast("تم حذف الصورة.");
+        }
+
+        // Color Catalog Dynamic Manager
+        function initCatalogData() {
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            const keys = Object.keys(catalog);
+            if (keys.length > 0) {
+                activeColorCategoryKey = keys[0];
+            }
+            renderColorCategories();
+        }
+
+        function renderColorCategories() {
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            const keys = Object.keys(catalog);
+            if (!keys.includes(activeColorCategoryKey) && keys.length > 0) {
+                activeColorCategoryKey = keys[0];
+            }
+
+            const container = document.getElementById('color-tabs-container');
+            container.innerHTML = keys.map(cat => `
+                <button onclick="switchColorCategory('${cat}')" class="color-tab-btn ${cat === activeColorCategoryKey ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-300'} font-bold px-4 py-1.5 rounded-full text-xs whitespace-nowrap transition">
+                    ${cat}
+                </button>
+            `).join('');
+
+            renderShadesForActiveCategory();
+        }
+
+        function switchColorCategory(cat) {
+            activeColorCategoryKey = cat;
+            renderColorCategories();
+        }
+
+        function renderShadesForActiveCategory() {
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            const shades = catalog[activeColorCategoryKey] || [];
+            const container = document.getElementById('shades-container');
+
+            container.innerHTML = shades.map((hex, index) => `
+                <div class="relative group shade-card h-20 rounded-2xl p-2 flex flex-col justify-end items-center cursor-pointer shadow-lg border border-white/10" style="background-color: ${hex}" onclick="copyHex('${hex}')">
+                    ${isAdmin ? `
+                        <button onclick="event.stopPropagation(); removeShade(${index})" class="absolute top-1 right-1 bg-rose-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center shadow">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    ` : ''}
+                    <span class="text-[10px] font-black bg-slate-900/80 text-white px-2 py-0.5 rounded-full">${hex}</span>
+                </div>
+            `).join('');
+        }
+
+        function addNewColorCategory() {
+            const name = document.getElementById('new-cat-name').value.trim();
+            if (!name) return alert("يرجى إدخال اسم العائلة");
+
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            if (catalog[name]) return alert("هذه العائلة موجودة بالفعل");
+
+            catalog[name] = ['#38bdf8', '#0284c7'];
+            localStorage.setItem('eslam_catalog', JSON.stringify(catalog));
+            activeColorCategoryKey = name;
+            document.getElementById('new-cat-name').value = '';
+            renderColorCategories();
+            showToast("تمت إضافة عائلة الألوان بنجاح!");
+        }
+
+        function deleteCurrentCategory() {
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            const keys = Object.keys(catalog);
+            if (keys.length <= 1) return alert("لا يمكن حذف آخر عائلة ألوان متبقية");
+
+            if (confirm(`هل أنت متأكد من حذف عائلة "${activeColorCategoryKey}" بالكامل؟`)) {
+                delete catalog[activeColorCategoryKey];
+                localStorage.setItem('eslam_catalog', JSON.stringify(catalog));
+                initCatalogData();
+                showToast("تم حذف العائلة.");
+            }
+        }
+
+        // Picker & Hex sync
+        const picker = document.getElementById('picker-new-shade');
+        const inputHex = document.getElementById('input-new-hex');
+        if (picker && inputHex) {
+            picker.addEventListener('input', (e) => { inputHex.value = e.target.value; });
+            inputHex.addEventListener('input', (e) => { if(e.target.value.startsWith('#')) picker.value = e.target.value; });
+        }
+
+        function addNewShadeToCurrentCategory() {
+            const hex = inputHex.value.trim();
+            if (!hex) return;
+
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            if (!catalog[activeColorCategoryKey]) catalog[activeColorCategoryKey] = [];
+            catalog[activeColorCategoryKey].push(hex);
+            localStorage.setItem('eslam_catalog', JSON.stringify(catalog));
+
+            renderShadesForActiveCategory();
+            showToast("تمت إضافة درجة اللون!");
+        }
+
+        function removeShade(index) {
+            let catalog = JSON.parse(localStorage.getItem('eslam_catalog')) || defaultCatalog;
+            catalog[activeColorCategoryKey].splice(index, 1);
+            localStorage.setItem('eslam_catalog', JSON.stringify(catalog));
+            renderShadesForActiveCategory();
+            showToast("تم حذف درجة اللون.");
+        }
+
+        function copyHex(hex) {
+            const el = document.createElement('textarea');
+            el.value = hex;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast(`تم نسخ كود اللون ${hex}`);
+        }
+
+        // Custom Sections & General Save
+        function openAddNewSectionModal() { openModal('add-section-modal'); }
+
+        function submitNewCustomSection() {
+            const title = document.getElementById('custom-sec-title').value.trim();
+            const desc = document.getElementById('custom-sec-desc').value.trim();
+            if (!title) return alert("يرجى إدخال عنوان القسم");
+
+            const container = document.getElementById('custom-added-sections');
+            const secId = 'sec-' + Date.now();
+
+            const secHTML = `
+                <div class="section-card relative bg-slate-800/80 border border-slate-700 p-5 rounded-2xl shadow-xl group" data-section-id="${secId}">
+                    <div class="section-controls ${isAdmin ? 'flex' : 'hidden'} absolute -top-3 left-3 bg-slate-900 border border-slate-700 rounded-lg p-1 gap-1 z-20">
+                        <button onclick="moveSection(this, 'up')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-arrow-up"></i></button>
+                        <button onclick="moveSection(this, 'down')" class="text-xs bg-slate-800 px-2 py-1 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-arrow-down"></i></button>
+                        <button onclick="deleteSection(this)" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded hover:bg-rose-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+
+                    <h3 class="editable-element text-base font-bold text-sky-400 mb-2" contenteditable="${isAdmin}">${title}</h3>
+                    <p class="editable-element text-xs sm:text-sm text-slate-300 leading-relaxed" contenteditable="${isAdmin}">${desc}</p>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', secHTML);
+            closeModal('add-section-modal');
+            document.getElementById('custom-sec-title').value = '';
+            document.getElementById('custom-sec-desc').value = '';
+            showToast("تمت إضافة القسم الجديد!");
+        }
+
+        function moveSection(btn, dir) {
+            const card = btn.closest('.section-card');
+            if (dir === 'up' && card.previousElementSibling) {
+                card.parentNode.insertBefore(card, card.previousElementSibling);
+            } else if (dir === 'down' && card.nextElementSibling) {
+                card.parentNode.insertBefore(card.nextElementSibling, card);
+            }
+        }
+
+        function deleteSection(btn) {
+            if (confirm("هل أنت تأكد من حذف هذا القسم؟")) {
+                btn.closest('.section-card').remove();
+                showToast("تم حذف القسم.");
+            }
+        }
+
+        function updatePhoneNumbers() {
+            const phone = document.getElementById('phone-number-input').value.trim();
+            if (!phone) return;
+
+            document.getElementById('link-phone').href = "tel:" + phone;
+            document.getElementById('link-whatsapp').href = "https://wa.me/" + phone.replace('+', '');
+            localStorage.setItem('eslam_phone', phone);
+            showToast("تم تحديث أرقام التواصل!");
+        }
+
+        function saveAllContent() {
+            const pageData = {
+                title: document.getElementById('site-title').innerHTML,
+                subtitle: document.getElementById('site-subtitle').innerHTML,
+                customSections: document.getElementById('custom-added-sections').innerHTML
+            };
+
+            localStorage.setItem('eslam_page_saved_data', JSON.stringify(pageData));
+            showToast("تم حفظ جميع التعديلات بنجاح!");
+        }
+
+        function loadSavedContent() {
+            const savedData = JSON.parse(localStorage.getItem('eslam_page_saved_data'));
+            if (savedData) {
+                if (savedData.title) document.getElementById('site-title').innerHTML = savedData.title;
+                if (savedData.subtitle) document.getElementById('site-subtitle').innerHTML = savedData.subtitle;
+                if (savedData.customSections) document.getElementById('custom-added-sections').innerHTML = savedData.customSections;
+            }
+
+            const savedPhone = localStorage.getItem('eslam_phone');
+            if (savedPhone) {
+                document.getElementById('phone-number-input').value = savedPhone;
+                document.getElementById('link-phone').href = "tel:" + savedPhone;
+                document.getElementById('link-whatsapp').href = "https://wa.me/" + savedPhone.replace('+', '');
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = text;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+    </script>
+</body>
+</html>
